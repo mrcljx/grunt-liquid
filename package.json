@@ -34,6 +34,7 @@
     "grunt-contrib-nodeunit": "~0.1.2",
     "grunt-contrib-clean": "~0.4.0",
     "grunt-contrib-internal": "~0.4.2",
+    "q": ">= 0.8.12",
     "grunt": "~0.4.0"
   },
   "peerDependencies": {
