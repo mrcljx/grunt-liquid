@@ -20,7 +20,7 @@ module.exports = function(grunt) {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({});
 
-    grunt.log.writeflags(options, 'Options');
+    grunt.verbose.writeflags(options, 'Options');
 
     this.files.forEach(function(fp) {
       var srcFiles = fp.src;
