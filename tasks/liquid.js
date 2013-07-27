@@ -12,7 +12,7 @@
 var path = require("path");
 
 module.exports = function(grunt) {
-  var Liquid = require('../lib/liquid-ext');
+  var Liquid = require('./lib/liquid-ext');
 
   grunt.registerMultiTask('liquid', 'Compile liquid templates.', function() {
     var done = this.async();
