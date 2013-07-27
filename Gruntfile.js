@@ -25,6 +25,7 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     liquid: {
       options: {
+        includes: 'test/fixtures/inc',
         products: [
           {
             name: "Wonderflonium",

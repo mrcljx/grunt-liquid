@@ -12,13 +12,15 @@
 var path = require("path");
 
 module.exports = function(grunt) {
-  var Liquid = require('./lib/liquid-ext');
+  var Liquid    = require('./lib/liquid-ext');
 
   grunt.registerMultiTask('liquid', 'Compile liquid templates.', function() {
     var done = this.async();
 
     // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({});
+    var options = this.options({
+      includes: ''
+    });
 
     grunt.verbose.writeflags(options, 'Options');
 
@@ -30,7 +32,7 @@ module.exports = function(grunt) {
       var dir = path.dirname(fp.src);
 
       var parsePromise = Liquid.Template.extParse(content, function(subFilepath, cb) {
-        cb(null, grunt.file.read(path.resolve(dir, subFilepath + ext)));
+        cb(null, grunt.file.read(path.join(options.includes, subFilepath + ext)));
       });
 
       parsePromise.done(function(template) {
@@ -56,6 +58,5 @@ module.exports = function(grunt) {
     });
 
   });
-
 };
 
