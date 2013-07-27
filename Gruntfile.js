@@ -13,40 +13,42 @@ module.exports = function(grunt) {
   grunt.initConfig({
     jshint: {
       all: [
-        'Gruntfile.js',
-        'tasks/*.js',
-        '<%= nodeunit.tests %>'
+          'Gruntfile.js',
+          'tasks/*.js',
+          '<%= nodeunit.tests %>'
       ],
       options: {
         jshintrc: '.jshintrc'
       }
     },
 
-    // Before generating any new files, remove any previously-created files.
-    clean: {
-      test: ['tmp']
-    },
-
     // Configuration to be run (and then tested).
     liquid: {
-      compile: {
-        files: {
-          'tmp/liquid.html': 'test/fixtures/liquid.liquid',
-          'tmp/liquid2.html': 'test/fixtures/liquid2.liquid'
-        },
-        options: {
-          products: [{
+      options: {
+        products: [
+          {
             name: "Wonderflonium",
             price: "$9.99",
             description: "Great for building freeze rays!"
-          }]
-        }
+          }
+        ]
       },
+      pages: {
+        files: [
+          {expand: true, flatten: true, cwd: 'test/fixtures', src: '*.liquid', dest: 'tmp/actual/', ext: '.html'}
+        ]
+      }
     },
 
     // Unit tests.
     nodeunit: {
       tests: ['test/*_test.js']
+    },
+
+    // Before generating any new files,
+    // remove any previously-created files.
+    clean: {
+      dist: ['dist/**/*.{md,html}', 'tmp/*.html']
     }
   });
 
@@ -61,9 +63,12 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'liquid', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'default', 'nodeunit']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test', 'build-contrib']);
+  grunt.registerTask('default', ['jshint', 'clean', 'liquid']);
+
+  // Build readme.
+  grunt.registerTask('readme', ['build-contrib']);
 
 };
