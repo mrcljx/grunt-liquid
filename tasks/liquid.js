@@ -6,67 +6,57 @@
  * Licensed under the MIT license.
  */
 
+
 'use strict';
 
-var Path = require("path");
+var path = require("path");
 
 module.exports = function(grunt) {
-  var _ = grunt.util._;
-  var helpers = require('grunt-lib-contrib').init(grunt);
-  var Liquid = require('../lib/liquid-ext');
-
-  // content conversion for templates
-  var defaultProcessContent = function(content) { return content; };
-
-  // filename conversion for templates
-  var defaultProcessName = function(name) { return name.replace('.liquid', ''); };
+  var Liquid    = require('./lib/liquid-ext');
 
   grunt.registerMultiTask('liquid', 'Compile liquid templates.', function() {
-    var options = this.options({});
-    
+    var done = this.async();
+
+    // Merge task-specific and/or target-specific options with these defaults.
+    var options = this.options({
+      includes: ''
+    });
+
     grunt.verbose.writeflags(options, 'Options');
 
-    var done = this.async();
-    var data = options.data;
-    delete options.data;
+    this.files.forEach(function(fp) {
+      var srcFiles = fp.src;
+      var content  = grunt.file.read(srcFiles);
 
-    // assign transformation functions
-    var processContent = options.processContent || defaultProcessContent;
-    var processName = options.processName || defaultProcessName;
+      var ext = path.extname(srcFiles);
+      var dir = path.dirname(fp.src);
 
-    this.files.forEach(function(f) {
-      var templates = [], filepath = String(f.src), pwd = Path.dirname(f.src);
-      var src = processContent(grunt.file.read(filepath));
-      var filename = processName(filepath);
-
-      options = grunt.util._.extend(options, { filename: filepath });
-
-      var parsePromise = Liquid.Template.extParse(src, function(subFilepath, cb) {
-        cb(null, grunt.file.read(Path.resolve(pwd, subFilepath + ".liquid")));
+      var parsePromise = Liquid.Template.extParse(content, function(subFilepath, cb) {
+        cb(null, grunt.file.read(path.join(options.includes, subFilepath + ext)));
       });
 
       parsePromise.done(function(template) {
         var promise = template.render(options);
-      
+
         promise.done(function(output) {
-          grunt.file.write(f.dest, output);
-          grunt.log.writeln('File "' + f.dest + '" created.');
+          grunt.file.write(fp.dest, output);
+          grunt.log.writeln('File "' + fp.dest + '" created.');
         });
-      
+
         promise.fail(function() {
           grunt.log.warn('Destination not written because compiled files were empty.');
-        })
-      
+        });
+
         promise.fin(done);
       });
-      
-      parsePromise.fail(function() {
+
+      parsePromise.fail(function(e) {
         grunt.log.error(e);
-        grunt.fail.warn('Liquid failed to compile '+filepath+'.');
+        grunt.fail.warn('Liquid failed to compile ' + srcFiles + '.');
         done();
       });
     });
 
   });
-
 };
+

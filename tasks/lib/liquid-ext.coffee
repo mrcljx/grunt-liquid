@@ -1,3 +1,4 @@
+
 Q = require('q')
 module.exports = Liquid = require('liquid-node')
 
@@ -41,46 +42,46 @@ Liquid.Template.registerTag "include", do ->
     constructor: (tagName, markup, tokens, template) ->
       match = Syntax.exec(markup)
       throw new Liquid.SyntaxError(SyntaxHelp) unless match
-      
+
       @filepath = match[1]
       deferred = Q.defer()
       @included = deferred.promise
-      
+
       template.importer @filepath, (err, src) ->
         subTemplate = Liquid.Template.extParse src, template.importer
         subTemplate.then (t) -> deferred.resolve t
-        
+
       super
 
     render: (context) ->
       @included.then (i) -> i.render context
-      
+
 Liquid.Template.extParse = (src, importer) ->
   baseTemplate = new Liquid.Template
   baseTemplate.importer = importer
   baseTemplate.parse src
 
   return Q(baseTemplate) unless baseTemplate.extends
-  
+
   stack = [baseTemplate]
   depth = 0
   deferred = Q.defer()
-  
+
   walker = (tmpl, cb) ->
     return cb() unless tmpl.extends
-    
+
     tmpl.importer tmpl.extends, (err, data) ->
       return cb err if err
       return cb "too many `extends`" if depth > 100
       depth++
-      
+
       Liquid.Template.extParse(data, importer)
         .then((subTemplate) ->
           stack.unshift subTemplate
           walker subTemplate, cb
         )
         .fail((err) -> cb(err ? "Failed to parse template."))
-  
+
   walker stack[0], (err) =>
     return deferred.reject err if err
 
@@ -102,5 +103,5 @@ Liquid.Template.extParse = (src, importer) ->
       rootTemplateBlocks[k]?.replace(v) for own k, v of subTemplateBlocks
 
     deferred.resolve rootTemplate
-  
+
   deferred.promise
