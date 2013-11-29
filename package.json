@@ -25,7 +25,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "liquid-node": "~0.1.0",
+    "liquid-node": "git+ssh://git@github.com:samtiffin/liquid-node.git",
     "coffee": "~0.0.0",
     "grunt-lib-contrib": "~0.5.1"
   },
