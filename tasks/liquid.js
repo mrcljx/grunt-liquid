@@ -32,7 +32,23 @@ module.exports = function(grunt) {
       var dir = path.dirname(fp.src);
 
       var parsePromise = Liquid.Template.extParse(content, function(subFilepath, cb) {
-        cb(null, grunt.file.read(path.join(options.includes, subFilepath + ext)));
+        var includes = (options.includes instanceof Array ? options.includes : [options.includes]);
+        var found = false;
+
+        includes.some(function(include) {
+          var includePath = path.join(include, subFilepath + ext);
+
+          if (grunt.file.exists(includePath)) {
+            found = true;
+            cb(null, grunt.file.read(includePath));
+          }
+
+          return found;
+        });
+
+        if (!found) {
+          cb("Not found.");
+        }
       });
 
       parsePromise.done(function(template) {
