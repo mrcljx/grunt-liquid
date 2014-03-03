@@ -26,8 +26,7 @@
   },
   "dependencies": {
     "liquid-node": "~0.1.0",
-    "coffee": "~0.0.0",
-    "grunt-lib-contrib": "~0.5.1"
+    "coffee": "~0.0.0"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.2.0",
