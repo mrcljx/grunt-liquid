@@ -52,21 +52,15 @@ module.exports = function(grunt) {
       });
 
       parsePromise.done(function(template) {
-        var promise = template.render(options);
-
-        promise.done(function(output) {
+        template.render(options).done(function(output) {
           grunt.file.write(fp.dest, output);
           grunt.log.writeln('File "' + fp.dest + '" created.');
-        });
-
-        promise.fail(function() {
-          grunt.log.warn('Destination not written because compiled files were empty.');
-        });
-
-        promise.fin(done);
+        }).catch(function(e) {
+          grunt.log.warn('Destination not written (maybe because compiled files were empty). ' + e);
+        }).finally(done);
       });
 
-      parsePromise.fail(function(e) {
+      parsePromise.catch(function(e) {
         grunt.log.error(e);
         grunt.fail.warn('Liquid failed to compile ' + srcFiles + '.');
         done();
@@ -75,4 +69,3 @@ module.exports = function(grunt) {
 
   });
 };
-
