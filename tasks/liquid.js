@@ -52,10 +52,10 @@ module.exports = function(grunt) {
       });
 
       parsePromise.done(function(template) {
-        template.render(options).done(function(output) {
+        template.render(options).then(function(output) {
           grunt.file.write(fp.dest, output);
           grunt.log.writeln('File "' + fp.dest + '" created.');
-        }).catch(function(e) {
+        }, function(e) {
           grunt.log.warn('Destination not written (maybe because compiled files were empty). ' + e);
         }).finally(done);
       });
