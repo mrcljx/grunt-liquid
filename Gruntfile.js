@@ -9,67 +9,59 @@
 
 module.exports = function(grunt) {
 
-  // Project configuration.
   grunt.initConfig({
     jshint: {
       all: [
           'Gruntfile.js',
-          'tasks/*.js',
           '<%= nodeunit.tests %>'
       ],
       options: {
         jshintrc: '.jshintrc'
       }
     },
-
-    // Configuration to be run (and then tested).
-    liquid: {
-      options: {
-        includes: 'test/fixtures/inc',
-        products: [
-          {
-            name: "Wonderflonium",
-            price: "$9.99",
-            description: "Great for building freeze rays!"
-          }
-        ]
-      },
-      pages: {
-        files: [
-          {expand: true, flatten: true, cwd: 'test/fixtures', src: '*.liquid', dest: 'tmp/actual/', ext: '.html'}
-        ]
+    
+    coffeelint: {
+      all: ["src/**/*.coffee"]
+    },
+    
+    coffee: {
+      compile: {
+        files: {
+          "tasks/index.js": "src/index.coffee",
+          "tasks/lib/liquid-ext.js": "src/lib/liquid-ext.coffee"
+        }
       }
     },
 
-    // Unit tests.
+    run_grunt: {
+      liquid: {
+        src: ["Gruntfile-test.js"]
+      }
+    },
+
     nodeunit: {
       tests: ['test/*_test.js']
     },
 
-    // Before generating any new files,
-    // remove any previously-created files.
     clean: {
-      dist: ['dist/**/*.{md,html}', 'tmp/*.html']
+      dist: ['tasks']
     }
   });
 
-  // Actually load this plugin's task(s).
-  grunt.loadTasks('tasks');
-
-  // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('grunt-contrib-internal');
+  grunt.loadNpmTasks('grunt-run-grunt');
 
-  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
-  // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'default', 'nodeunit']);
-
-  // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'clean', 'liquid']);
-
-  // Build readme.
-  grunt.registerTask('readme', ['build-contrib']);
-
+  grunt.registerTask('lint', ['coffeelint', 'jshint']);
+  // grunt.hideTask('lint');
+  
+  grunt.registerTask('compile', ['clean', 'coffee']);
+  // grunt.hideTask('compile');
+  
+  grunt.registerTask('test', ['compile', 'lint', 'run_grunt:liquid', 'nodeunit']);
+  grunt.registerTask('default', ['test']);
 };

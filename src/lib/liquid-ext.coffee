@@ -4,7 +4,8 @@ module.exports = Liquid = require('liquid-node')
 Liquid.Template.registerTag "block", do ->
   class BlockBlock extends Liquid.Block
     Syntax = /(\w+)/
-    SyntaxHelp = "Syntax Error in 'block' - Valid syntax: block [templateName]"
+    SyntaxHelp = "Syntax Error in 'block' -
+                  Valid syntax: block [templateName]"
 
     constructor: (tagName, markup, tokens, template) ->
       match = Syntax.exec(markup)
@@ -21,7 +22,8 @@ Liquid.Template.registerTag "block", do ->
 Liquid.Template.registerTag "extends", do ->
   class ExtendsTag extends Liquid.Tag
     Syntax = /([a-z0-9\/\\_-]+)/i
-    SyntaxHelp = "Syntax Error in 'extends' - Valid syntax: extends [templateName]"
+    SyntaxHelp = "Syntax Error in 'extends' -
+                  Valid syntax: extends [templateName]"
 
     constructor: (tagName, markup, tokens, template) ->
       match = Syntax.exec(markup)
@@ -36,7 +38,8 @@ Liquid.Template.registerTag "extends", do ->
 Liquid.Template.registerTag "include", do ->
   class IncludeTag extends Liquid.Tag
     Syntax = /([a-z0-9\/\\_-]+)/i
-    SyntaxHelp = "Syntax Error in 'include' - Valid syntax: include [templateName]"
+    SyntaxHelp = "Syntax Error in 'include' -
+                  Valid syntax: include [templateName]"
 
     constructor: (tagName, markup, tokens, template) ->
       match = Syntax.exec(markup)
