@@ -8,7 +8,8 @@
 path = require "path"
 
 module.exports = (grunt) ->
-  Liquid = require("./lib/liquid-ext")
+  engine = require("./lib/liquid-ext")()
+  
   grunt.registerMultiTask "liquid", "Compile liquid templates.", ->
     done = @async()
 
@@ -22,7 +23,7 @@ module.exports = (grunt) ->
       ext = path.extname(srcFiles)
       dir = path.dirname(fp.src)
 
-      parsePromise = Liquid.Template.extParse content, (subFilepath, cb) ->
+      parsePromise = engine.extParse content, (subFilepath, cb) ->
         includes = options.includes
         includes = [includes] unless Array.isArray includes
 
