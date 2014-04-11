@@ -1,7 +1,7 @@
 {
   "name": "grunt-liquid",
   "description": "Compile Liquid templates.",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "homepage": "https://github.com/sirlantis/grunt-liquid",
   "author": "Marcel Jackwerth",
   "repository": {
