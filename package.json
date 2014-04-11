@@ -1,7 +1,7 @@
 {
   "name": "grunt-liquid",
   "description": "Compile Liquid templates.",
-  "version": "0.0.7",
+  "version": "0.2.0",
   "homepage": "https://github.com/sirlantis/grunt-liquid",
   "author": "Marcel Jackwerth",
   "repository": {
@@ -26,7 +26,7 @@
     "prepublish": "grunt test"
   },
   "dependencies": {
-    "liquid-node": "~0.1.4"
+    "liquid-node": "~0.2.0"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.2.0",
