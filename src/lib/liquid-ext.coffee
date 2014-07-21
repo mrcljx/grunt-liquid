@@ -3,7 +3,7 @@ Liquid = require('liquid-node')
 
 module.exports = ->
   engine = new Liquid.Engine
-  
+
   engine.registerTag "block", do ->
     class BlockBlock extends Liquid.Block
       Syntax = /(\w+)/
@@ -63,51 +63,52 @@ module.exports = ->
 
   engine.extParse = (src, importer) ->
     engine.importer = importer
-    baseTemplate = engine.parse src
+    parser = engine.parse src
 
-    return Q(baseTemplate) unless baseTemplate.extends
+    parser.then (baseTemplate) ->
+      return baseTemplate unless baseTemplate.extends
 
-    stack = [baseTemplate]
-    depth = 0
-    deferred = Q.defer()
+      stack = [baseTemplate]
+      depth = 0
+      deferred = Q.defer()
 
-    walker = (tmpl, cb) ->
-      return cb() unless tmpl.extends
+      walker = (tmpl, cb) ->
+        return cb() unless tmpl.extends
 
-      tmpl.engine.importer tmpl.extends, (err, data) ->
-        return cb err if err
-        return cb "too many `extends`" if depth > 100
-        depth++
+        tmpl.engine.importer tmpl.extends, (err, data) ->
+          return cb err if err
+          return cb "too many `extends`" if depth > 100
+          depth++
 
-        engine.extParse(data, importer)
-          .then((subTemplate) ->
-            stack.unshift subTemplate
-            walker subTemplate, cb
-          )
-          .fail((err) -> cb(err ? "Failed to parse template."))
+          engine.extParse(data, importer)
+            .then((subTemplate) ->
+              stack.unshift subTemplate
+              walker subTemplate, cb
+            )
+            .catch((err) -> cb(err ? "Failed to parse template."))
 
-    walker stack[0], (err) =>
-      return deferred.reject err if err
+      walker stack[0], (err) ->
+        return deferred.reject err if err
 
-      [rootTemplate, subTemplates...] = stack
+        [rootTemplate, subTemplates...] = stack
 
-      # Queries should find the block of the lowest,
-      # most specific child.
-      #
-      # query   | root.a | c1.a | c2.a | result
-      # ---------------------------------------
-      # a       |        | "C1" |      | "C1"
-      # a       | "ROOT" | "C1" | "C2" | "C2"
-      #
-      subTemplates.forEach (subTemplate) ->
+        # Queries should find the block of the lowest,
+        # most specific child.
+        #
+        # query   | root.a | c1.a | c2.a | result
+        # ---------------------------------------
+        # a       |        | "C1" |      | "C1"
+        # a       | "ROOT" | "C1" | "C2" | "C2"
+        #
+        subTemplates.forEach (subTemplate) ->
 
-        # blocks
-        subTemplateBlocks = subTemplate.exportedBlocks or {}
-        rootTemplateBlocks = rootTemplate.exportedBlocks or {}
-        rootTemplateBlocks[k]?.replace(v) for own k, v of subTemplateBlocks
+          # blocks
+          subTemplateBlocks = subTemplate.exportedBlocks or {}
+          rootTemplateBlocks = rootTemplate.exportedBlocks or {}
+          rootTemplateBlocks[k]?.replace(v) for own k, v of subTemplateBlocks
 
-      deferred.resolve rootTemplate
+        deferred.resolve rootTemplate
 
-    deferred.promise
+      deferred.promise
 
   engine

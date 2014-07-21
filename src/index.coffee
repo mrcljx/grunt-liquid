@@ -8,10 +8,10 @@
 path = require "path"
 
 module.exports = (grunt) ->
-  engine = require("./lib/liquid-ext")()
-  
   grunt.registerMultiTask "liquid", "Compile liquid templates.", ->
     done = @async()
+
+    engine = require("./lib/liquid-ext")()
 
     # Merge task-specific and/or target-specific options with these defaults.
     options = @options includes: ""

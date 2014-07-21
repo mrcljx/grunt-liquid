@@ -19,14 +19,14 @@
   ],
   "main": "Gruntfile.js",
   "engines": {
-    "node": ">= 0.6.0"
+    "node": ">= 1.0.0"
   },
   "scripts": {
     "test": "grunt test",
     "prepublish": "grunt test"
   },
   "dependencies": {
-    "liquid-node": "~0.2.0"
+    "liquid-node": "~2.0.0"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.2.0",
