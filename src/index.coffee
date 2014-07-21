@@ -45,7 +45,7 @@ module.exports = (grunt) ->
           grunt.file.write fp.dest, output
           grunt.log.writeln "File \"#{fp.dest}\" created."
         .catch (e) ->
-          grunt.log.warn e
+          grunt.fail.warn e
         .finally done
 
       parsePromise.catch (e) ->
