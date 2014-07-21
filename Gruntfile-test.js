@@ -4,10 +4,21 @@ module.exports = function(grunt) {
     liquid: {
       options: {
         includes: 'test/fixtures/inc',
+        filters: {
+          prettyprint: function(s) {
+            return "<span class=\"pretty\">" + s + "</span>"
+          },
+          paragraph: function(s) {
+            return "<p>" + s + "</p>";
+          },
+          price: function(s) {
+            return "$" + s;
+          }
+        },
         products: [
           {
             name: "Wonderflonium",
-            price: "$9.99",
+            price: "9.99",
             description: "Great for building freeze rays!"
           }
         ]

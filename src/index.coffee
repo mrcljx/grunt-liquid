@@ -17,6 +17,8 @@ module.exports = (grunt) ->
     options = @options includes: ""
     grunt.verbose.writeflags options, "Options"
 
+    engine.registerFilters options.filters if options.filters
+
     @files.forEach (fp) ->
       srcFiles = fp.src
       content = grunt.file.read(srcFiles)
