@@ -43,7 +43,7 @@
   },
   "peerDependencies": {
     "q": ">= 0.8.12",
-    "grunt": "~0.4.0"
+    "grunt": ">=0.4.0"
   },
   "keywords": [
     "gruntplugin"
